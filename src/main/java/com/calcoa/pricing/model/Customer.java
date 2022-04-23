@@ -8,22 +8,34 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name="customers")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Customer {
     @Id
-    public String customerID;
-    public String name;
-    public LocalDate freeDayStart;
-    public LocalDate freeDayEnd;
-    public Float priceServiceA;
-    public Float priceServiceB;
-    public Float priceServiceC;
-    public Float discountServiceA;
-    public Float discountServiceB;
-    public Float discountServiceC;
-    public LocalDate startingDateServiceA;
-    public LocalDate startingDateServiceB;
-    public LocalDate startingDateServiceC;
+    @Column(name="customerid")
+    private String customerID;
+    @Column(name="name")
+    private String name;
+    @Column(name="number_free_days")
+    private Integer numberOfFreeDays;
+    @Column(name="price_service_a")
+    private Float priceServiceA;
+    @Column(name="price_service_b")
+    private Float priceServiceB;
+    @Column(name="price_service_c")
+    private Float priceServiceC;
+    @Column(name="discount_service_a")
+    private Float discountServiceA;
+    @Column(name="discount_service_b")
+    private Float discountServiceB;
+    @Column(name="discount_service_c")
+    private Float discountServiceC;
+    @Column(name="start_service_a")
+    private LocalDate startingDateServiceA;
+    @Column(name="start_service_b")
+    private LocalDate startingDateServiceB;
+    @Column(name="start_service_c")
+    private LocalDate startingDateServiceC;
 }
