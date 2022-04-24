@@ -1,6 +1,8 @@
 package com.calcoa.pricing.operations;
 
+import com.calcoa.pricing.exceptions.CustomerNotFoundException;
 import com.calcoa.pricing.model.Customer;
+import com.calcoa.pricing.model.ServiceType;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -21,7 +24,8 @@ public class PricingOperation {
     private final ServiceRepository serviceRepository;
 
     public BigDecimal pricingPerCustomer(String customerId, String startDate, String endDate) {
-        Customer customerInfo = customerRepository.getById(customerId);
+        Customer customerInfo = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer Not Found!"));
 
         return priceForServiceA(customerInfo, dateConvertedFromStringToLocalDate(startDate), dateConvertedFromStringToLocalDate(endDate))
                 .add(priceForServiceB(customerInfo, dateConvertedFromStringToLocalDate(startDate), dateConvertedFromStringToLocalDate(endDate)))
@@ -29,42 +33,51 @@ public class PricingOperation {
     }
 
     private BigDecimal priceForServiceA(Customer customer, LocalDate startDate, LocalDate endDate) {
-        BigDecimal numberOfBilledDays = countBilledDays(serviceRepository.getById("serviceA").getType(),
-                startDate, endDate, customer.getNumberOfFreeDays());
+        Optional<ServiceType> serviceA = serviceRepository.findById("serviceA");
 
-        if (customer.getPriceServiceA()!=null) {
-            if (customer.getDiscountServiceA()!=null) {
-                return customer.getDiscountServiceA().multiply(customer.getPriceServiceA()).multiply(numberOfBilledDays);
-            } else {
-                return customer.getPriceServiceA().multiply(numberOfBilledDays);
+        if (serviceA.isPresent()) {
+            BigDecimal numberOfBilledDays = countBilledDays(serviceA.get().getType(),
+                    startDate, endDate, customer.getNumberOfFreeDays());
+            if (customer.getPriceServiceA() != null) {
+                if (customer.getDiscountServiceA() != null) {
+                    return customer.getDiscountServiceA().multiply(customer.getPriceServiceA()).multiply(numberOfBilledDays);
+                } else {
+                    return customer.getPriceServiceA().multiply(numberOfBilledDays);
+                }
             }
         }
         return BigDecimal.ZERO;
     }
 
     private BigDecimal priceForServiceB(Customer customer, LocalDate startDate, LocalDate endDate) {
-        BigDecimal numberOfBilledDays = countBilledDays(serviceRepository.getById("serviceB").getType(),
-                startDate, endDate, customer.getNumberOfFreeDays());
+        Optional<ServiceType> serviceB = serviceRepository.findById("serviceB");
 
-        if (customer.getPriceServiceB()!=null) {
-            if (customer.getDiscountServiceB()!=null) {
-                return customer.getDiscountServiceB().multiply(customer.getDiscountServiceB()).multiply(numberOfBilledDays);
-            } else {
-                return customer.getPriceServiceB().multiply(numberOfBilledDays);
+        if (serviceB.isPresent()) {
+            BigDecimal numberOfBilledDays = countBilledDays(serviceB.get().getType(),
+                    startDate, endDate, customer.getNumberOfFreeDays());
+            if (customer.getPriceServiceB() != null) {
+                if (customer.getDiscountServiceB() != null) {
+                    return customer.getDiscountServiceB().multiply(customer.getDiscountServiceB()).multiply(numberOfBilledDays);
+                } else {
+                    return customer.getPriceServiceB().multiply(numberOfBilledDays);
+                }
             }
         }
         return BigDecimal.ZERO;
     }
 
     private BigDecimal priceForServiceC(Customer customer, LocalDate startDate, LocalDate endDate) {
-        BigDecimal numberOfBilledDays = countBilledDays(serviceRepository.getById("serviceC").getType(),
-                startDate, endDate, customer.getNumberOfFreeDays());
+        Optional<ServiceType> serviceC = serviceRepository.findById("serviceC");
 
-        if (customer.getPriceServiceC()!=null) {
-            if (customer.getDiscountServiceC()!=null) {
-                return customer.getDiscountServiceC().multiply(customer.getPriceServiceC()).multiply(numberOfBilledDays);
-            } else {
-                return customer.getPriceServiceC().multiply(numberOfBilledDays);
+        if (serviceC.isPresent()) {
+            BigDecimal numberOfBilledDays = countBilledDays(serviceC.get().getType(),
+                    startDate, endDate, customer.getNumberOfFreeDays());
+            if (customer.getPriceServiceC() != null) {
+                if (customer.getDiscountServiceC() != null) {
+                    return customer.getDiscountServiceC().multiply(customer.getPriceServiceC()).multiply(numberOfBilledDays);
+                } else {
+                    return customer.getPriceServiceC().multiply(numberOfBilledDays);
+                }
             }
         }
         return BigDecimal.ZERO;
@@ -79,7 +92,7 @@ public class PricingOperation {
 
     private BigDecimal countBilledDays(String serviceType, LocalDate startDate, LocalDate endDate, int numberOfFreeDays) {
         BigDecimal numberOfBusinessDays = countBusinessDays(startDate, endDate);
-        BigDecimal numberOfCalendarDays = new BigDecimal(DAYS.between(startDate,endDate));
+        BigDecimal numberOfCalendarDays = new BigDecimal(DAYS.between(startDate, endDate));
         if (serviceType.equals("business_day")) {
             return numberOfBusinessDays.subtract(BigDecimal.valueOf(numberOfFreeDays));
         }
