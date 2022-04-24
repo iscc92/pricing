@@ -23,7 +23,7 @@ public class PricingController {
     }
 
     @Operation(summary= "Services cost",
-            description = "Billing value by %customer%, between %startDate% and %endDate%")
+            description = "Billing value by customer, between startDate and endDate")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "operation succeeded"),
             @ApiResponse(responseCode = "400", description = "input parameters not allowed")}
