@@ -1,17 +1,13 @@
 package com.calcoa.pricing.controller;
 
+import com.calcoa.pricing.dto.PricingResponseDTO;
 import com.calcoa.pricing.operations.PricingOperation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.math.BigDecimal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/pricing")
@@ -30,13 +26,13 @@ public class PricingController {
             @ApiResponse(responseCode = "200", description = "operation succeeded"),
             @ApiResponse(responseCode = "400", description = "input parameters not allowed")}
     )
-    @PostMapping("/customerId")
-    public ResponseEntity<BigDecimal> getPricingPerCustomerId(@RequestParam(name = "customerId") String customerId,
-                                                              @RequestParam(name = "startDate") String startDate,
-                                                              @RequestParam(name = "endDate") String endDate) {
+    @PostMapping(value = "/{customerId}", produces = "application/json")
+    public ResponseEntity<PricingResponseDTO> getPricingPerCustomerId(@PathVariable(name = "customerId") String customerId,
+                                                                      @RequestParam(name = "startDate") String startDate,
+                                                                      @RequestParam(name = "endDate") String endDate) {
 
         return ResponseEntity
-                .ok(pricingOperation.pricingPerCustomer(customerId, startDate, endDate));
+                .ok(new PricingResponseDTO(pricingOperation.pricingPerCustomer(customerId, startDate, endDate)));
     }
 
 }
