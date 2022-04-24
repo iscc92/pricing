@@ -1,6 +1,7 @@
 package com.calcoa.pricing.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +16,8 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Service {
+@Builder
+public class ServiceType {
 
     @Id
     @Column(name="name")
