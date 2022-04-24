@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/pricing")
-@Tag(name ="Pricing Rest Interface" ,description="Obtain billing values for services")
+@Tag(name = "Pricing Rest Interface", description = "Obtain billing values for services")
 public class PricingController {
 
     private final PricingOperation pricingOperation;
@@ -20,7 +20,7 @@ public class PricingController {
         this.pricingOperation = pricingOperation;
     }
 
-    @Operation(summary= "Services cost",
+    @Operation(summary = "Services cost",
             description = "Billing value by customer, between startDate and endDate")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "operation succeeded"),
