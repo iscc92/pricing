@@ -1,7 +1,9 @@
 package com.calcoa.pricing.operations;
 
-import com.calcoa.pricing.model.Customer;
-import com.calcoa.pricing.model.ServiceType;
+import com.calcoa.pricing.model.ServiceBillingType;
+import com.calcoa.pricing.model.entity.Contract;
+import com.calcoa.pricing.model.entity.Customer;
+import com.calcoa.pricing.model.entity.ServiceType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,9 +13,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.eq;
@@ -27,52 +29,104 @@ public class PricingOperationTest {
     @Mock
     private CustomerRepository customerRepository;
 
-    @Mock
-    private ServiceRepository serviceRepository;
-
     @Test
-    void test_pricingPerCustomer_CustomerY() {
+    void test_pricingPerCustomer_CustomerX() {
         //Given
-        String customerId = "Customer Y";
-        String startDate = "2018-01-01";
+        String customerId = "X";
+        String startDate = "2019-09-20";
         String endDate = "2019-10-01";
-        BigDecimal expected = BigDecimal.valueOf(75.60).setScale(2, RoundingMode.DOWN);
+        LocalDate discountStartDate = LocalDate.parse("2019-09-22");
+        LocalDate discountEndDate = LocalDate.parse("2019-09-24");
 
-        Customer customerToCalculateBillingPrice = Customer.builder()
-                .customerID("Customer Y")
-                .numberOfFreeDays(200)
-                .priceServiceB(BigDecimal.valueOf(0.24))
-                .priceServiceC(BigDecimal.valueOf(0.4))
-                .discountServiceB(BigDecimal.valueOf(0.3))
-                .discountServiceC(BigDecimal.valueOf(0.3))
-                .startingDateServiceB(LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .startingDateServiceC(LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        ServiceType serviceA = ServiceType.builder()
+                .price(BigDecimal.valueOf(0.2))
+                .type(ServiceBillingType.BUSINESS_DAY)
                 .build();
-        Mockito.when(customerRepository.findById(eq(customerId)))
-                .thenReturn(Optional.of(customerToCalculateBillingPrice));
 
-        ServiceType serviceAMock = ServiceType.builder()
-                .name("serviceA")
-                .type("business_day")
+        ServiceType serviceC = ServiceType.builder()
+                .price(BigDecimal.valueOf(0.4))
+                .type(ServiceBillingType.CALENDAR_DAY)
                 .build();
-        Mockito.when(serviceRepository.findById("serviceA")).thenReturn(Optional.of(serviceAMock));
 
-        ServiceType serviceBMock = ServiceType.builder()
-                .name("serviceB")
-                .type("business_day")
+        Contract contractForServiceA = Contract.builder()
+                .service(serviceA)
+                .startDate(LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .build();
-        Mockito.when(serviceRepository.findById("serviceB")).thenReturn(Optional.of(serviceBMock));
 
-        ServiceType serviceCMock = ServiceType.builder()
-                .name("serviceC")
-                .type("calendar_day")
+        Contract contractForServiceC = Contract.builder()
+                .service(serviceC)
+                .startDate(LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .discountStartDate(discountStartDate)
+                .discountEndDate(discountEndDate)
+                .discountPercentageValue(BigDecimal.valueOf(0.2))
                 .build();
-        Mockito.when(serviceRepository.findById("serviceC")).thenReturn(Optional.of(serviceCMock));
+
+        Customer customer = Customer.builder()
+                .customerID(customerId)
+                .numberOfFreeDays(0)
+                .startDate(LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .contracts(List.of(contractForServiceA, contractForServiceC))
+                .build();
+
+        Mockito.when(customerRepository.findById(eq(customerId))).thenReturn(Optional.of(customer));
+
 
         //When
         BigDecimal actual = pricingOperation.pricingPerCustomer(customerId, startDate, endDate);
 
         //Then
-        Assertions.assertEquals(expected, actual);
+        Assertions.assertEquals(BigDecimal.valueOf(5.64), actual);
+    }
+
+    @Test
+    void test_pricingPerCustomer_CustomerY() {
+        //Given
+        String customerId = "Y";
+        String startDate = "2018-01-01";
+        String endDate = "2019-10-01";
+        LocalDate discountStartDate = LocalDate.parse(startDate);
+        LocalDate discountEndDate = LocalDate.parse("2042-09-24");
+
+        ServiceType serviceB = ServiceType.builder()
+                .price(BigDecimal.valueOf(0.24))
+                .type(ServiceBillingType.BUSINESS_DAY)
+                .build();
+
+        ServiceType serviceC = ServiceType.builder()
+                .price(BigDecimal.valueOf(0.4))
+                .type(ServiceBillingType.CALENDAR_DAY)
+                .build();
+
+        Contract contractForServiceB = Contract.builder()
+                .service(serviceB)
+                .startDate(LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .discountStartDate(discountStartDate)
+                .discountEndDate(discountEndDate)
+                .discountPercentageValue(BigDecimal.valueOf(0.3))
+                .build();
+
+        Contract contractForServiceC = Contract.builder()
+                .service(serviceC)
+                .startDate(LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .discountStartDate(discountStartDate)
+                .discountEndDate(discountEndDate)
+                .discountPercentageValue(BigDecimal.valueOf(0.3))
+                .build();
+
+        Customer customer = Customer.builder()
+                .customerID(customerId)
+                .numberOfFreeDays(200)
+                .startDate(LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .contracts(List.of(contractForServiceB, contractForServiceC))
+                .build();
+
+        Mockito.when(customerRepository.findById(eq(customerId))).thenReturn(Optional.of(customer));
+
+
+        //When
+        BigDecimal actual = pricingOperation.pricingPerCustomer(customerId, startDate, endDate);
+
+        //Then
+        Assertions.assertEquals(BigDecimal.valueOf(175.06), actual);
     }
 }
