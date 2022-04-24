@@ -1,7 +1,7 @@
 -- Create SERVICES table
 CREATE TABLE if not exists Services (
     name varchar(25) NOT NULL,
-    price decimal NOT NULL,
+    price numeric NOT NULL,
     type varchar(25) NOT NULL,
     PRIMARY KEY (name)
 );
@@ -10,13 +10,13 @@ CREATE TABLE if not exists Services (
 CREATE TABLE if not exists Customers (
     customerID varchar(25) NOT NULL,
     name varchar(25) NOT NULL,
-    number_free_days int,
-    price_service_A float,
-    price_service_B float,
-    price_service_C float,
-    discount_service_A float,
-    discount_service_B float,
-    discount_service_C float,
+    number_free_days numeric,
+    price_service_A numeric,
+    price_service_B numeric,
+    price_service_C numeric,
+    discount_service_A numeric,
+    discount_service_B numeric,
+    discount_service_C numeric,
     start_service_A date,
     start_service_B date,
     start_service_C date,
