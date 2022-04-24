@@ -1,7 +1,9 @@
 package com.calcoa.pricing.operations;
 
-import com.calcoa.pricing.model.Service;
+import com.calcoa.pricing.model.ServiceType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.web.context.annotation.ApplicationScope;
 
-public interface ServiceRepository extends JpaRepository<Service, String> {
+@ApplicationScope
+public interface ServiceRepository extends JpaRepository<ServiceType, String> {
 }
