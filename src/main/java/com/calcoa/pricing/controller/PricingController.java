@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/pricing")
 @Tag(name ="Pricing Rest Interface" ,description="Obtain billing values for services")
@@ -29,9 +31,9 @@ public class PricingController {
             @ApiResponse(responseCode = "400", description = "input parameters not allowed")}
     )
     @PostMapping("/customerId")
-    public ResponseEntity<Double> getPricingPerCustomerId(@RequestParam(name = "customerId") String customerId,
-                                                          @RequestParam(name = "startDate") String startDate,
-                                                          @RequestParam(name = "endDate") String endDate) {
+    public ResponseEntity<BigDecimal> getPricingPerCustomerId(@RequestParam(name = "customerId") String customerId,
+                                                              @RequestParam(name = "startDate") String startDate,
+                                                              @RequestParam(name = "endDate") String endDate) {
 
         return ResponseEntity
                 .ok(pricingOperation.pricingPerCustomer(customerId, startDate, endDate));

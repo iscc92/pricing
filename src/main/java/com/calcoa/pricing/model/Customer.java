@@ -4,7 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -21,17 +25,17 @@ public class Customer {
     @Column(name="number_free_days")
     private Integer numberOfFreeDays;
     @Column(name="price_service_a")
-    private Float priceServiceA;
+    private BigDecimal priceServiceA;
     @Column(name="price_service_b")
-    private Float priceServiceB;
+    private BigDecimal priceServiceB;
     @Column(name="price_service_c")
-    private Float priceServiceC;
+    private BigDecimal priceServiceC;
     @Column(name="discount_service_a")
-    private Float discountServiceA;
+    private BigDecimal discountServiceA;
     @Column(name="discount_service_b")
-    private Float discountServiceB;
+    private BigDecimal discountServiceB;
     @Column(name="discount_service_c")
-    private Float discountServiceC;
+    private BigDecimal discountServiceC;
     @Column(name="start_service_a")
     private LocalDate startingDateServiceA;
     @Column(name="start_service_b")
