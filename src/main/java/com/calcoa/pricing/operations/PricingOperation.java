@@ -1,9 +1,9 @@
 package com.calcoa.pricing.operations;
 
 import com.calcoa.pricing.exceptions.CustomerNotFoundException;
-import com.calcoa.pricing.model.ServiceBillingType;
-import com.calcoa.pricing.model.entity.Contract;
-import com.calcoa.pricing.model.entity.Customer;
+import com.calcoa.pricing.dao.ServiceBillingType;
+import com.calcoa.pricing.dao.entity.Contract;
+import com.calcoa.pricing.dao.entity.Customer;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

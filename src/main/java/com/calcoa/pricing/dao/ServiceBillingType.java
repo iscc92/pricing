@@ -1,4 +1,4 @@
-package com.calcoa.pricing.model;
+package com.calcoa.pricing.dao;
 
 public enum ServiceBillingType {
     BUSINESS_DAY,

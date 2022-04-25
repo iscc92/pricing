@@ -1,9 +1,9 @@
 package com.calcoa.pricing.operations;
 
-import com.calcoa.pricing.model.ServiceBillingType;
-import com.calcoa.pricing.model.entity.Contract;
-import com.calcoa.pricing.model.entity.Customer;
-import com.calcoa.pricing.model.entity.ServiceType;
+import com.calcoa.pricing.dao.ServiceBillingType;
+import com.calcoa.pricing.dao.entity.Contract;
+import com.calcoa.pricing.dao.entity.Customer;
+import com.calcoa.pricing.dao.entity.ServiceType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

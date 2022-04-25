@@ -1,6 +1,6 @@
-package com.calcoa.pricing.model.entity;
+package com.calcoa.pricing.dao.entity;
 
-import com.calcoa.pricing.model.ServiceBillingType;
+import com.calcoa.pricing.dao.ServiceBillingType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
