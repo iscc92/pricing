@@ -1,5 +1,5 @@
 # ~~~ PRICING API ~~~
-This project is a simples API to calculate cost prices for services billed to a specific Customer. The typical Use 
+This project is a simple API to calculate cost prices for services billed to a specific Customer. The typical Use 
 Case consists of giving as input CustomerId, StartDate and EndDate (all three in String format), and receiving a JSON 
 object containing your billing price. 
 
