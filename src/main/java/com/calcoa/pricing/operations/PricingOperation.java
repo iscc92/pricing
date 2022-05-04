@@ -54,7 +54,7 @@ public class PricingOperation {
 
         BigDecimal numberOfDiscountedDays;
         BigDecimal discountedDaysTotal;
-        if (contract.getDiscountStartDate() != null && contract.getDiscountEndDate() != null && contract.getDiscountPercentageValue() != null) {
+        if (checkIfDiscountApplies(contract)) {
             LocalDate discountStartDate;
             if (startDate.isAfter(contract.getDiscountStartDate())) {
                 discountStartDate = startDate;
@@ -84,6 +84,9 @@ public class PricingOperation {
 
         return fullPriceDaysTotal.add(discountedDaysTotal).setScale(2, RoundingMode.HALF_UP);
     }
+
+    private Boolean checkIfDiscountApplies(Contract contract) {
+    return contract.getDiscountStartDate() != null && contract.getDiscountEndDate() != null && contract.getDiscountPercentageValue() != null; }
 
     private LocalDate dateConvertedFromStringToLocalDate(String dateToConvert) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
