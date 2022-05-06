@@ -1,9 +1,9 @@
 package com.calcoa.pricing.operations;
 
-import com.calcoa.pricing.exceptions.CustomerNotFoundException;
 import com.calcoa.pricing.dao.ServiceBillingType;
 import com.calcoa.pricing.dao.entity.Contract;
 import com.calcoa.pricing.dao.entity.Customer;
+import com.calcoa.pricing.exceptions.CustomerNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,12 +30,7 @@ public class PricingOperation {
         LocalDate endDate = dateConvertedFromStringToLocalDate(endDateString);
 
         LocalDate billingStartDate = customerInfo.getStartDate().plusDays(customerInfo.getNumberOfFreeDays());
-        LocalDate effectiveStartDate;
-        if (startDate.isBefore(billingStartDate)) {
-            effectiveStartDate = billingStartDate;
-        } else {
-            effectiveStartDate = startDate;
-        }
+        LocalDate effectiveStartDate = selectAppropriateEarlierDate(billingStartDate, startDate);
 
         return customerInfo.getContracts().stream()
                 .map(contract -> priceForContract(contract, effectiveStartDate, endDate))
@@ -43,31 +38,16 @@ public class PricingOperation {
     }
 
     private BigDecimal priceForContract(Contract contract, LocalDate startDate, LocalDate endDate) {
-        LocalDate billingStartDate;
-        if (startDate.isAfter(contract.getStartDate())) {
-            billingStartDate = startDate;
-        } else {
-            billingStartDate = contract.getStartDate();
-        }
+        LocalDate billingStartDate = selectAppropriateEarlierDate(startDate, contract.getStartDate());
 
         BigDecimal numberOfBilledDays = countBilledDays(contract.getService().getType(), billingStartDate, endDate);
 
         BigDecimal numberOfDiscountedDays;
         BigDecimal discountedDaysTotal;
         if (checkIfDiscountApplies(contract)) {
-            LocalDate discountStartDate;
-            if (startDate.isAfter(contract.getDiscountStartDate())) {
-                discountStartDate = startDate;
-            } else {
-                discountStartDate = contract.getDiscountStartDate();
-            }
+            LocalDate discountStartDate = selectAppropriateEarlierDate(startDate, contract.getDiscountStartDate());
 
-            LocalDate discountEndDate;
-            if (endDate.isAfter(contract.getDiscountEndDate())) {
-                discountEndDate = contract.getDiscountEndDate();
-            } else {
-                discountEndDate = endDate;
-            }
+            LocalDate discountEndDate = selectAppropriateLaterDate(endDate, contract.getDiscountEndDate());
 
             numberOfDiscountedDays = countBilledDays(contract.getService().getType(), discountStartDate, discountEndDate);
 
@@ -83,6 +63,22 @@ public class PricingOperation {
                 .multiply(fullPriceDays);
 
         return fullPriceDaysTotal.add(discountedDaysTotal).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    private LocalDate selectAppropriateEarlierDate(LocalDate dateA, LocalDate dateB) {
+        if (dateA.isAfter(dateB)) {
+            return dateA;
+        } else {
+            return dateB;
+        }
+    }
+
+    private LocalDate selectAppropriateLaterDate(LocalDate dateA, LocalDate dateB) {
+        if (dateA.isAfter(dateB)) {
+            return dateB;
+        } else {
+            return dateA;
+        }
     }
 
     private Boolean checkIfDiscountApplies(Contract contract) {
