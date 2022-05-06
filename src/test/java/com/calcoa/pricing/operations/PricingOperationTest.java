@@ -4,6 +4,7 @@ import com.calcoa.pricing.dao.ServiceBillingType;
 import com.calcoa.pricing.dao.entity.Contract;
 import com.calcoa.pricing.dao.entity.Customer;
 import com.calcoa.pricing.dao.entity.ServiceType;
+import com.calcoa.pricing.dto.PricingResponseDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -72,10 +73,10 @@ public class PricingOperationTest {
 
 
         //When
-        BigDecimal actual = pricingOperation.pricingPerCustomer(customerId, startDate, endDate);
+        PricingResponseDTO actual = pricingOperation.pricingPerCustomer(customerId, startDate, endDate);
 
         //Then
-        Assertions.assertEquals(BigDecimal.valueOf(5.64), actual);
+        Assertions.assertEquals(BigDecimal.valueOf(5.64), actual.getBillingPrice());
     }
 
     @Test
@@ -124,9 +125,9 @@ public class PricingOperationTest {
 
 
         //When
-        BigDecimal actual = pricingOperation.pricingPerCustomer(customerId, startDate, endDate);
+        PricingResponseDTO actual = pricingOperation.pricingPerCustomer(customerId, startDate, endDate);
 
         //Then
-        Assertions.assertEquals(BigDecimal.valueOf(175.06), actual);
+        Assertions.assertEquals(BigDecimal.valueOf(175.06), actual.getBillingPrice());
     }
 }

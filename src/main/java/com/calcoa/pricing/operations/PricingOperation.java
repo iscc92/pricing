@@ -3,6 +3,7 @@ package com.calcoa.pricing.operations;
 import com.calcoa.pricing.dao.ServiceBillingType;
 import com.calcoa.pricing.dao.entity.Contract;
 import com.calcoa.pricing.dao.entity.Customer;
+import com.calcoa.pricing.dto.PricingResponseDTO;
 import com.calcoa.pricing.exceptions.CustomerNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class PricingOperation {
 
     private final CustomerRepository customerRepository;
 
-    public BigDecimal pricingPerCustomer(String customerId, String startDateString, String endDateString) {
+    public PricingResponseDTO pricingPerCustomer(String customerId, String startDateString, String endDateString) {
         Customer customerInfo = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
@@ -32,9 +33,9 @@ public class PricingOperation {
         LocalDate billingStartDate = customerInfo.getStartDate().plusDays(customerInfo.getNumberOfFreeDays());
         LocalDate effectiveStartDate = selectAppropriateEarlierDate(billingStartDate, startDate);
 
-        return customerInfo.getContracts().stream()
+        return new PricingResponseDTO( customerInfo.getContracts().stream()
                 .map(contract -> priceForContract(contract, effectiveStartDate, endDate))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
     }
 
     private BigDecimal priceForContract(Contract contract, LocalDate startDate, LocalDate endDate) {

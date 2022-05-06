@@ -32,7 +32,7 @@ public class PricingController {
                                                                       @RequestParam(name = "endDate") String endDate) {
 
         return ResponseEntity
-                .ok(new PricingResponseDTO(pricingOperation.pricingPerCustomer(customerId, startDate, endDate)));
+                .ok(pricingOperation.pricingPerCustomer(customerId, startDate, endDate));
     }
 
 }
